@@ -1,10 +1,10 @@
 class install_odoo {
   # Fetching variables from Hiera or defining default values
-  $linux_username = lookup('linux_username', String, 'first', 'odoo17')
-  $odoo_version = lookup('odoo_version', String, 'first', '17.0')
-  $postgres_username = lookup('postgres_username', String, 'first', 'odoo17')
-  $db_password = lookup('db_password', String, 'first', 'Od00786-')
-  $odoo_port = lookup('odoo_port', String, 'first', '8069')
+  $linux_username = lookup('linux_username', String)
+  $odoo_version = lookup('odoo_version', String)
+  $postgres_username = lookup('postgres_username')
+  $db_password = lookup('db_password', String)
+  $odoo_port = lookup('odoo_port', String)
 
   # Install necessary packages
   package { ['wkhtmltopdf', 'postgresql', 'postgresql-client', 'python3-pip', ...]:
