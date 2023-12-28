@@ -1,3 +1,4 @@
+# puppet_odoo/manifests/install_nginx.pp
 class puppet_odoo::install_nginx {
   # Retrieve the actual hostname of the system
   $system_hostname = $facts['networking']['hostname']

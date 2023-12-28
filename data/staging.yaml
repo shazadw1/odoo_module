@@ -1,0 +1,6 @@
+---
+ssh_keys_module::github_private_key_staging: |
+  -----BEGIN RSA PRIVATE KEY-----
+  ... (Staging private key content here)
+  -----END RSA PRIVATE KEY-----
+

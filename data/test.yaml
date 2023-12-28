@@ -1,0 +1,5 @@
+---
+ssh_keys_module::github_private_key_test: |
+  -----BEGIN RSA PRIVATE KEY-----
+  ... (Test private key content here)
+  -----END RSA PRIVATE KEY-----

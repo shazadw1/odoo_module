@@ -1,3 +1,4 @@
+# puppet_odoo/manifests/install_odoo.pp
 class puppet_odoo::install_odoo {
 
   # Retrieve and process variables from config.yml

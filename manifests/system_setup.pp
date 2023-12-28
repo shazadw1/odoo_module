@@ -1,3 +1,4 @@
+# puppet_odoo/manifests/system_setup.pp
 class puppet_odoo::system_setup {
 
   # Function to update the package list

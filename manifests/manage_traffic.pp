@@ -1,3 +1,4 @@
+# puppet_odoo/manifests/manage_traffic.pp
 class puppet_odoo::manage_traffic {
   # Allowed incoming ports
   $allowed_ports = ['80', '443', '8443', '22', '8069']

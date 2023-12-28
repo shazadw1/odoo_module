@@ -1,3 +1,4 @@
+# puppet_odoo/manifests/set_backups.pp
 class puppet_odoo::set_backups {
   # Ensure the cron.daily directory exists
   file { '/etc/cron.daily':

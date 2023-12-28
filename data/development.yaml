@@ -1,0 +1,5 @@
+---
+ssh_keys_module::github_private_key_development: |
+  -----BEGIN RSA PRIVATE KEY-----
+  ... (Development private key content here)
+  -----END RSA PRIVATE KEY-----
