@@ -1,0 +1,11 @@
+[Unit]
+Description=Odoo Service for <%= @odoo_user %>
+Documentation=http://www.odoo.com
+
+[Service]
+Type=simple
+User=<%= @odoo_user %>
+ExecStart=/opt/<%= @odoo_user %>/odoo-bin -c /etc/<%= @odoo_user %>.conf
+
+[Install]
+WantedBy=default.target

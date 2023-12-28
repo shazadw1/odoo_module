@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Set the backup base directory
+backup_base="/opt/backups"
+
+# Create the backup base directory if it doesn't exist
+if [ ! -d "<%= @backup_base %>" ]; then
+    mkdir -p "<%= @backup_base %>"
+fi
+
+# Create a timestamp for the backup
+timestamp=$(date +"%Y%m%d_%H%M%S")
+date_folder=$(date +"%Y%m%d")
+
+# Create the backup date folder if it doesn't exist
+if [ ! -d "<%= @backup_base %>/<%= @date_folder %>" ]; then
+    mkdir -p "<%= @backup_base %>/<%= @date_folder %>"
+fi
+
+# Backup PostgreSQL databases
+sudo -u postgres pg_dumpall > "<%= @backup_base %>/<%= @date_folder %>/odoo_db_<%= @timestamp %>.sql"
+
+# Copy Odoo data directory
+cp -r "/opt/odoo17/data_dir" "<%= @backup_base %>/<%= @date_folder %>/odoo_data_<%= @timestamp %>"
+
+# Compress the backup files
+tar -czf "<%= @backup_base %>/<%= @date_folder %>/odoo_backup_<%= @timestamp %>.tar.gz" \
+    "<%= @backup_base %>/<%= @date_folder %>/odoo_db_<%= @timestamp %>.sql" \
+    "<%= @backup_base %>/<%= @date_folder %>/odoo_data_<%= @timestamp %>"
+
+# Remote directory on Google Drive
+remote_directory="remote:/backups/$(hostname)/<%= @date_folder %>"
+
+# Log file for rclone copy
+rclone_log="/var/log/rclone_backup.log"
+
+# Add timestamp to the log file
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting rclone copy." >> "<%= @rclone_log %>"
+
+# Check and create the remote hostname directory if it doesn't exist
+rclone mkdir "<%= @remote_directory %>" --log-file "<%= @rclone_log %>"
+
+# Upload the backup files to Google Drive using rclone with logging
+rclone copy "<%= @backup_base %>/<%= @date_folder %>" "<%= @remote_directory %>" --log-file "<%= @rclone_log %>"
+
+# Check rclone exit status and log result
+if [ $? -eq 0 ]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Rclone copy completed successfully." >> "<%= @rclone_log %>"
+else
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Error: Rclone copy failed. See '<%= @rclone_log %>' for details." >&2
+fi
+
+# Remove old backups (keep the last 7 days)
+find "<%= @backup_base %>" -name "odoo_backup_*.tar.gz" -mtime +7 -exec rm {} \;

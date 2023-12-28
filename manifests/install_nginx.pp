@@ -1,8 +1,4 @@
 class puppet_odoo::install_nginx {
-  # Set linux_username to 'odoo'
-  $linux_username = 'odoo'
-  $odoo_config_file = "/etc/${linux_username}.conf"
-
   # Retrieve the actual hostname of the system
   $system_hostname = $facts['networking']['hostname']
 
@@ -19,27 +15,26 @@ class puppet_odoo::install_nginx {
 
   # Enable HTTPS with Certbot for Nginx
   exec { 'enable_https_certbot':
-    command     => "certbot --nginx -d ${system_hostname} --redirect --hsts",
-    path        => ['/bin', '/usr/bin'],
-    refreshonly => true,
-    subscribe   => Package['certbot'],
+  command     => "certbot --nginx -d ${system_hostname} --redirect --hsts --non-interactive --agree-tos --email waseem@adaplo.io",
+  path        => ['/bin', '/usr/bin'],
+  refreshonly => true,
+  subscribe   => Package['certbot'],
+}
+
+
+  # Remove the default Nginx configuration file created by Certbot
+  file { "/etc/nginx/sites-enabled/${system_hostname}":
+    ensure  => absent,
+    require => Package['nginx'],
+    notify  => Service['nginx'],
   }
 
-  # Configure Nginx
+  # Configure Nginx with a template
   file { "/etc/nginx/sites-enabled/${system_hostname}":
     ensure  => file,
     source  => "puppet:///modules/puppet_odoo/nginx.conf",
     require => Package['nginx'],
     notify  => Service['nginx'],
-  }
-
-  # Update the Odoo configuration file
-  exec { 'update_odoo_config_file':
-    command     => "echo -e 'xmlrpc_interface = 127.0.0.1\\nnetrpc_interface = 127.0.0.1\\nproxy_mode = True' >> ${odoo_config_file}",
-    path        => ['/bin', '/usr/bin'],
-    unless      => "grep -q 'xmlrpc_interface = 127.0.0.1' ${odoo_config_file}",
-    require     => File[$odoo_config_file],
-    refreshonly => true,
   }
 
   # Nginx service management
