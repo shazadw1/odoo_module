@@ -5,18 +5,20 @@ class puppet_odoo::system_setup {
   exec { 'update-package-list':
     command => 'apt update',
     path    => ['/bin', '/usr/bin'],
+    require => Package['apt'],
   }
 
   # Function to upgrade installed packages
   exec { 'upgrade-installed-packages':
     command => 'apt upgrade -y',
     path    => ['/bin', '/usr/bin'],
+    require => Exec['update-package-list'],
   }
 
   # Function to install necessary packages
-  exec { 'install-necessary-packages':
-    command => 'apt install -y openssh-server fail2ban jq',
-    path    => ['/bin', '/usr/bin'],
+  package { ['openssh-server', 'fail2ban', 'jq']:
+    ensure => 'installed',
+    require => Exec['upgrade-installed-packages'],
   }
 
   # Create group 'odoo_group'
@@ -34,7 +36,8 @@ class puppet_odoo::system_setup {
       shell      => '/bin/bash',
       home       => "/home/${user}",
       managehome => true,
-      groups     => ['root', 'odoo_group'], # Add user to 'root' and 'odoo_group' groups
+      groups     => ['root', 'odoo_group'],
+      require    => Group['odoo_group'],
     }
 
     file { "/home/${user}/.ssh":
@@ -42,6 +45,7 @@ class puppet_odoo::system_setup {
       owner   => $user,
       group   => $user,
       mode    => '0700',
+      require => User[$user],
     }
 
     file { "/home/${user}/.ssh/authorized_keys":
@@ -49,7 +53,9 @@ class puppet_odoo::system_setup {
       owner   => $user,
       group   => $user,
       mode    => '0600',
-      source  => "puppet:///modules/puppet_odoo/keys/${user}.pub", # Use the user-specific public key template
+      content => file("puppet:///modules/puppet_odoo/filess/${user}.yaml"),
+      require => File["/home/${user}/.ssh"],
     }
   }
 }
+

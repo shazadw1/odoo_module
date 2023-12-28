@@ -9,3 +9,9 @@ GITHUB_USERNAME: "shazadw1"
 users:
   - "waseem"
   - "kal"
+allowed_ips:
+  - "95.149.154.194"
+  - "82.23.184.194"
+  - "86.31.225.220"
+allowed_fqdns:
+  - "sysop.adaplo.co.uk"

@@ -9,6 +9,8 @@ node default {
   
   
   include puppet_odoo::github_access
+  #include puppet_odoo::secure_odoo
+
 
   # Add other classes as needed for all nodes
 }
