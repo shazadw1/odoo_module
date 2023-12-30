@@ -1,10 +1,8 @@
 odoo_version: "17.0"
 odoo_port: "8069"
-pg_password: "Od00786-"
+pg_password: ""
 pgadmin_port: "5050"
 apache_https_port: "8443"
-git_token: "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"
-github_token_synch: "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"
 GITHUB_USERNAME: "shazadw1"
 users:
   - "waseem"
